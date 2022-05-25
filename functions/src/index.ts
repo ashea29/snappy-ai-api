@@ -6,15 +6,21 @@ import handleValidationResults from '../utilities/handleValidationResults';
 import axios from "axios";
 
 
+interface Request {
+  body: {
+    userPrompt: string
+  }
+}
+
 const app = express()
-app.use(cors({ origin: '*'}))
+app.use(cors())
 
 app.post(
   '/api/prompt',
   [
     check('userPrompt').not().isEmpty().trim().escape()
   ],
-  async (req: any, res: any) => {
+  async (req: Request, res: any) => {
     handleValidationResults(req, res)
     const { userPrompt } = req.body
 
@@ -36,9 +42,7 @@ app.post(
     try {
       res.status(200).send({
         status: 'success',
-        data: {
-          aiResponse
-        }
+        aiResponse: aiResponse
       })
     } catch (error) {
       res.send({ code: 500, error: error})
